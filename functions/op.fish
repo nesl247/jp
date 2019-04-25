@@ -72,7 +72,7 @@ function __op_get_project -a project
     end
 
     if test -z "$projectIndex" || test -z "$projects"
-        __op_error "Project not found"
+        echo "Project not found"
 
         return 1
     end
@@ -172,6 +172,12 @@ function op --description "Open a project"
     end
 
     set -l projectInfo (__op_get_project "$project")
+
+    if test $status -eq 1
+        __op_error $projectInfo
+
+        return 1
+    end
 
     set -l projectName (string split ':' $projectInfo)[1]
     set -l projectDir (string split ':' $projectInfo)[2]
