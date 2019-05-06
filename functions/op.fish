@@ -59,8 +59,8 @@ function __op_get_project -a project
     end
 
     set -l projects (__op_get_projects)
-    set -l projectMatch (string match -r "$project:[^\s]+" $projects)
-    set -l projectIndex (contains -i "$projectMatch" $projects)
+    set -l projectMatch (string match -r "^$project:[^\s]+\$" $projects)
+    set -l projectIndex
 
     if set -q projectMatch[1]
         set projectIndex (contains -i "$projectMatch[1]" $projects)
