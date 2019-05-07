@@ -1,5 +1,5 @@
 function __op_usage
-    echo "usage: op <project> [ <args>]"
+    echo "usage: op <project> [ <args> ]"
     echo
     echo "Open Project (op) is a project quick-access tool. It allows"
     echo "you to cd to a project, edit it in either \$EDITOR, or in \$IDE,"
