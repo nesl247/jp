@@ -90,34 +90,46 @@ function __op_get_projects -a forceUpdate
 
     if test -z $forceUpdate
         set forceUpdate false
-    else
-        echo "Updating projects"
     end
 
-    if eval $forceUpdate && test -f $cacheFile
+    if test -f $cacheFile
         read -a projects <$cacheFile
     end
 
-    if test -f $cacheFile && not eval $forceUpdate
-        read -a projects <$cacheFile
-    else
-        # These are your project directories
-        for directory in $OP_PROJECT_DIRS
-            for filePath in $directory/*
-                if not test -d $filePath
-                    continue
-                end
+    if eval not $forceUpdate && set -q projects
+        printf "%s\n" $projects
 
-                set -l entry (basename $filePath):$filePath
+        return
+    end
 
-                if not contains $entry $projects
-                    set -a projects $entry
-                end
+    if eval $forceUpdate
+        for project in $projects
+            set -l projectDir (string split ':' $project)[2]
+
+            if not test -d $projectDir
+                set projectIndex (contains -i "$project" $projects)
+
+                set -e projects[$projectIndex]
             end
         end
-
-        echo $projects >$cacheFile
     end
+
+    # These are your project directories
+    for directory in $OP_PROJECT_DIRS
+        for filePath in $directory/*
+            if not test -d $filePath
+                continue
+            end
+
+            set -l entry (basename $filePath):$filePath
+
+            if not contains $entry $projects
+                set -a projects $entry
+            end
+        end
+    end
+
+    echo $projects >$cacheFile
 
     printf "%s\n" $projects
 end
@@ -150,6 +162,7 @@ function op --description "Open a project"
 
                 set editInIde true
             case -u --update
+                echo "Updating projects"
                 __op_get_projects true 1>/dev/null
 
                 return
