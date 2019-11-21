@@ -34,7 +34,7 @@ function __op_update_projects -a project
         set -p projects $project
     end
 
-    mkdir -p (basename (__op_get_cache_file_name))
+    mkdir -p (dirname (__op_get_cache_file_name))
 
     echo $projects >(__op_get_cache_file_name)
 end
@@ -131,7 +131,7 @@ function __op_get_projects -a forceUpdate
         end
     end
 
-    mkdir -p (basename (__op_get_cache_file_name))
+    mkdir -p (dirname (__op_get_cache_file_name))
     echo $projects >$cacheFile
 
     printf "%s\n" $projects
