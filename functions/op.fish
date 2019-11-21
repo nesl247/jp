@@ -34,6 +34,8 @@ function __op_update_projects -a project
         set -p projects $project
     end
 
+    mkdir -p (basename (__op_get_cache_file_name))
+
     echo $projects >(__op_get_cache_file_name)
 end
 
