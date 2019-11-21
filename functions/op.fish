@@ -131,6 +131,7 @@ function __op_get_projects -a forceUpdate
         end
     end
 
+    mkdir -p (basename (__op_get_cache_file_name))
     echo $projects >$cacheFile
 
     printf "%s\n" $projects
