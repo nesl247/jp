@@ -44,8 +44,7 @@ function __op_autocomplete_projects
         set -l projectName (string split ':' $project)[1]
         set -l projectDir (string split ':' $project)[2]
 
-        set -l desc (_ "Project")
-        printf "%s\t$desc\n" $projectName
+        printf "%s\n" $projectName
     end
 end
 
@@ -99,6 +98,12 @@ function __op_get_projects -a forceUpdate
     end
 
     if eval not $forceUpdate && set -q projects
+        read -a aliases <(__op_get_alias_file_name)
+        echo $aliases
+        for project in $aliases
+            set -a projects $project
+        end
+
         printf "%s\n" $projects
 
         return
@@ -133,6 +138,12 @@ function __op_get_projects -a forceUpdate
 
     mkdir -p (dirname (__op_get_cache_file_name))
     echo $projects >$cacheFile
+
+    read -a aliases <(__op_get_alias_file_name)
+    echo $aliases
+    for project in $aliases
+        set -a projects $project
+    end
 
     printf "%s\n" $projects
 end
