@@ -10,6 +10,13 @@ function __op_usage
     echo " -i, --ide                            Edit in \$IDE"
     echo " -u, --update                         Update project list"
     echo " -h, --help                           This help message"
+    echo
+    echo "Configured project directories:"
+    echo
+
+    for projectDir in $OP_PROJECT_DIRS
+        echo $projectDir
+    end
 end
 
 function __op_error -a message
@@ -27,7 +34,7 @@ end
 
 function __op_update_projects -a project
     # Update order of auto completions based on usage
-    read -a projects <(__op_get_cache_file_name)
+    set projects (cat (__op_get_cache_file_name))
 
     if set -l index (contains -i $project $projects)
         set -e projects[$index]
@@ -36,7 +43,10 @@ function __op_update_projects -a project
 
     mkdir -p (dirname (__op_get_cache_file_name))
 
-    echo $projects >(__op_get_cache_file_name)
+    rm -f (__op_get_cache_file_name)
+    for project in $projects
+        echo $project >>(__op_get_cache_file_name)
+    end
 end
 
 function __op_autocomplete_projects
@@ -49,7 +59,7 @@ function __op_autocomplete_projects
 end
 
 function __op_get_project -a project
-    read -a aliases <(__op_get_alias_file_name)
+    set aliases (cat (__op_get_alias_file_name))
 
     set -l aliasMatch (string match -r "$project:[^\s]+" $aliases)
 
@@ -60,7 +70,7 @@ function __op_get_project -a project
     end
 
     set -l projects (__op_get_projects)
-    set -l projectMatch (string match -r "^$project:[^\s]+\$" $projects)
+    set -l projectMatch (string match -r "$project:[^\s]+\$" $projects)
     set -l projectIndex
 
     if set -q projectMatch[1]
@@ -94,12 +104,11 @@ function __op_get_projects -a forceUpdate
     end
 
     if test -f $cacheFile
-        read -a projects <$cacheFile
+        set projects (cat $cacheFile)
     end
 
     if eval not $forceUpdate && set -q projects
-        read -a aliases <(__op_get_alias_file_name)
-        echo $aliases
+        set aliases (__op_get_alias_file_name)
         for project in $aliases
             set -a projects $project
         end
@@ -123,12 +132,19 @@ function __op_get_projects -a forceUpdate
 
     # These are your project directories
     for directory in $OP_PROJECT_DIRS
+        echo "Searching $directory"
+
         for filePath in $directory/*
             if not test -d $filePath
                 continue
             end
 
-            set -l entry (basename $filePath):$filePath
+            # Exclude subdirectories of project directories if they are listed as a project directory
+            if contains -i "$filePath" $OP_PROJECT_DIRS
+                continue
+            end
+
+            set -l entry (basename (dirname $filePath))"/"(basename $filePath):$filePath
 
             if not contains $entry $projects
                 set -a projects $entry
@@ -137,10 +153,12 @@ function __op_get_projects -a forceUpdate
     end
 
     mkdir -p (dirname (__op_get_cache_file_name))
-    echo $projects >$cacheFile
+    rm -f (__op_get_cache_file_name)
+    for project in $projects
+        echo $project >>$cacheFile
+    end
 
-    read -a aliases <(__op_get_alias_file_name)
-    echo $aliases
+    set -l aliases (cat (__op_get_alias_file_name))
     for project in $aliases
         set -a projects $project
     end
@@ -150,7 +168,6 @@ end
 
 function op --description "Open a project"
     set -l edit false
-    set -l editInIde false
     set -l gitClient false
     set -l cacheFile (__op_get_cache_file_name)
     set -l project
@@ -160,21 +177,7 @@ function op --description "Open a project"
             case -g --git-client
                 set gitClient true
             case -e --edit
-                if eval $editInIde
-                    __op_error "Cannot use editor and IDE at the same time\n"
-
-                    return 1
-                end
-
                 set edit true
-            case -i --ide
-                if eval $edit
-                    __op_error "Cannot use editor and IDE at the same time\n"
-
-                    return 1
-                end
-
-                set editInIde true
             case -u --update
                 echo "Updating projects"
                 __op_get_projects true 1>/dev/null
@@ -227,9 +230,5 @@ function op --description "Open a project"
 
     if eval $edit
         eval "$EDITOR \"$projectDir\""
-    end
-
-    if eval $editInIde
-        eval "$IDE \"$projectDir\""
     end
 end
