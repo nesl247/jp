@@ -1,1 +1,1 @@
-complete --command op --no-files --keep-order --arguments '(__op_autocomplete_projects)'
+complete --command op --no-files --keep-order --arguments '(/usr/local/bin/op list)'
