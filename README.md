@@ -1,5 +1,5 @@
-# OP
-Open Project (op) is a project quick-access tool
+# JP
+Jump to Project (jp) is a project quick-access tool
 
 # Installation
 
@@ -10,7 +10,7 @@ omf install https://github.com/nesl247/op
 
 ## Fundle
 ```
-fundle plugin 'nesl247/op' # You should put this in your ~/.config/fish/config.fish
+fundle plugin 'nesl247/jp' # You should put this in your ~/.config/fish/config.fish
 fundle update
 ```
 
@@ -19,36 +19,36 @@ fundle update
 In `~/.config/fish/config.fish` you should add:
 
 ```
-set -x OP_PROJECT_DIRS <your> <dirs> <here> # e.g. set -x OP_PROJECT_DIRS $HOME/code
+set -x JP_PROJECT_DIRS <your> <dirs> <here> # e.g. set -x JP_PROJECT_DIRS $HOME/code
 ```
 
 # Usage
 Autocompletion:
 ```
-op <tab>
+jp <tab>
 ```
 
 `cd` to project:
 ```
-op <project>
+jp <project>
 ```
 
 Open project in `$EDITOR`:
 ```
-op -e <project>
+jp -e <project>
 ```
 
 Open project in `$IDE`:
 ```
-op -i <project>
+jp -i <project>
 ```
 
 Open project in `$GIT_CLIENT`:
 ```
-op -g <project>
+jp -g <project>
 ```
 
 You can also combine flags like:
 ```
-op -g -e <project>
+jp -g -e <project>
 ```
