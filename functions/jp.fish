@@ -1,9 +1,9 @@
-function __op_usage
-    echo "usage: op <project> [ <args> ]"
+function __jp_usage
+    echo "usage: jp <project> [ <args> ]"
     echo
-    echo "Open Project (op) is a project quick-access tool. It allows"
+    echo "Jump to Project (jp) is a project quick-access tool. It allows"
     echo "you to cd to a project, edit it in either \$EDITOR, or in \$IDE,"
-    echo "as well as in your prefered git client."
+    echo "as well as in your preferred git client."
     echo
     echo " -g, --git-client                     Open git client"
     echo " -e, --edit                           Edit in \$EDITOR"
@@ -14,16 +14,16 @@ function __op_usage
     echo "Configured project directories:"
     echo
 
-    for projectDir in $OP_PROJECT_DIRS
+    for projectDir in $JP_PROJECT_DIRS
         echo $projectDir
     end
 end
 
-function op --description "Open a project"
+function jp --description "Open a project"
     set -l edit false
     set -l gitClient false
     set -l project
-    set -l opBin (which op)
+    set -l jpBin (which jp)
 
     for option in $argv
         switch "$option"
@@ -32,15 +32,15 @@ function op --description "Open a project"
             case -e --edit
                 set edit true
             case update
-                $opBin update
+                $jpBin update
 
                 return
             case -h --help
-                $opBin --help
+                $jpBin --help
 
                 return
             case list
-                $opBin list
+                $jpBin list
 
                 return
             case \*
@@ -57,12 +57,12 @@ function op --description "Open a project"
     end
 
     if test -z $project
-        $opBin --help
+        $jpBin --help
 
         return
     end
 
-    set -l projectDir ($opBin $project)
+    set -l projectDir ($jpBin $project)
     cd "$projectDir"
 
     if eval $gitClient

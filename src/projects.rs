@@ -56,7 +56,7 @@ impl Projects {
     }
 
     fn file_path() -> PathBuf {
-        dirs::home_dir().unwrap().join(".config/op/projects.json")
+        dirs::home_dir().unwrap().join(".config/jp/projects.json")
     }
 
     fn open_file() -> Result<File, Error> {

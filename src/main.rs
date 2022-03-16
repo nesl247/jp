@@ -1,20 +1,21 @@
+use anyhow::Result;
 use std::env;
 
 use clap::{App, AppSettings, Arg};
 use log::LevelFilter;
 use simplelog::{ColorChoice, TermLogger};
 
-use op::projects::Projects;
+use jp::projects::Projects;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let project_directories: Vec<&str> = env!("OP_PROJECT_DIRS").split(" ").collect();
+    let project_directories: Vec<&str> = env!("JP_PROJECT_DIRS").split(" ").collect();
 
     let configured_project_directories = format!(
         "Configured project directories: \n\n{}",
         project_directories.join("\n")
     );
 
-    let mut app = App::new("Open Project (op)")
+    let mut app = App::new("Jump to Project (jp)")
         .version("1.0")
         .author("Alexander Kim <alexander@kim.family>")
         .about("Open projects in your terminal, and optionally other related tools.")
